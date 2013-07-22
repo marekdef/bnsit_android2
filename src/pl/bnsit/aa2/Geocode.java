@@ -56,15 +56,13 @@ public class Geocode extends FragmentActivity implements View.OnClickListener, L
     @Override
     protected void onResume() {
         super.onResume();
-        getSupportLoaderManager().initLoader(LOADER_CONTACTS_ID, null, this);
-        getSupportLoaderManager().initLoader(LOADER_QUERIES_ID, null, this);
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        getSupportLoaderManager().destroyLoader(LOADER_CONTACTS_ID);
-        getSupportLoaderManager().destroyLoader(LOADER_QUERIES_ID);
+
     }
 
     @Override
@@ -77,13 +75,6 @@ public class Geocode extends FragmentActivity implements View.OnClickListener, L
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
         Loader<Cursor> loader = null;
-        switch (id) {
-            case LOADER_CONTACTS_ID:
-                loader = createContactsLoader();
-                break;
-            case LOADER_QUERIES_ID:
-                break;
-        }
 
         return loader;
     }

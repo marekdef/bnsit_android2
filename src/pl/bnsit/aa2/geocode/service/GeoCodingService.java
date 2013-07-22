@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import com.google.gson.Gson;
-import pl.bnsit.aa2.geocode.json.Result;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -72,7 +71,7 @@ public class GeoCodingService extends Service {
                 inputStream.close();
 
                 final Gson gson = new Gson();
-                final Result result = gson.fromJson(stringFromInput, Result.class);
+
 
             } catch (IOException e) {
 

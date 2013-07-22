@@ -34,8 +34,6 @@
         </activity>
 
 
-        <service android:name=".geocode.service.GeoCodingService"/>
-
         <provider
                 android:authorities="pl.bnsit.aa2.geocode.provider"
                 android:name=".geocode.provider.QueriesProvider" >
