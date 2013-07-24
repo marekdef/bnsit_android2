@@ -9,11 +9,11 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
 public class QueriesProvider extends ContentProvider {
-    private static final String AUTHORITY = "pl.bnsit.aa2.geocoding";
+    private static final String AUTHORITY = "pl.bnsit.aa2.geocode.provider";
     private static final String BASE_PATH = "query";
     public static final Uri CONTENT_URI = Uri.parse("content://"+AUTHORITY+'/'+BASE_PATH);
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public static final String DATABASE_NAME = "queries.db";
     public static final String TABLE_NAME = "geocoded";
@@ -40,17 +40,17 @@ public class QueriesProvider extends ContentProvider {
                 db.execSQL("CREATE TABLE " + TABLE_NAME +
                         " ( " +
                         ID + " integer primary key," +
-                        STATUS + " integer NOT NULL" +
-                        CREATED + " date NOT NULL" +
+                        STATUS + " integer NOT NULL," +
+                        CREATED + " date NOT NULL," +
                         QUERY + " text NOT NULL, " +
-                        FORMATTED_ADDRESS + " text NOT NULL, " +
-                        LATITUDE +" REAL NOT NULL, " +
-                        LONGITUDE + " REAL NOT NULL)");
+                        FORMATTED_ADDRESS + " text, " +
+                        LATITUDE +" REAL, " +
+                        LONGITUDE + " REAL)");
             }
 
             @Override
             public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-                db.execSQL("DROP TABLE GEOCODED IF EXISTS");
+                db.execSQL("DROP TABLE IF EXISTS GEOCODED");
                 onCreate(db);
             }
         };
@@ -69,7 +69,9 @@ public class QueriesProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        return "pl.bnsit.aa2.geocoding.dir/pl.bnsit.aa2.geocoding.query";
+        if(BASE_PATH.equals(uri.getLastPathSegment()))
+            return "pl.bnsit.aa2.geocoding.dir/pl.bnsit.aa2.geocoding.query";
+        return "pl.bnsit.aa2.geocoding.item/pl.bnsit.aa2.geocoding.query";
     }
 
     @Override
@@ -92,7 +94,14 @@ public class QueriesProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        throw new UnsupportedOperationException();
+        SQLiteDatabase writableDatabase = helper.getWritableDatabase();
+        int rows = writableDatabase.update(TABLE_NAME, values, selection, selectionArgs);
+
+        Uri updateUri = Uri.withAppendedPath(CONTENT_URI, String.valueOf(rows));
+
+        getContext().getContentResolver().notifyChange(updateUri, null);
+        return rows;
+
     }
 }
 
